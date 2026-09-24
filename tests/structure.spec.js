@@ -152,4 +152,14 @@ ok('模板用到的每个 class 都在 WXSS 里有定义', function () {
   assert.deepStrictEqual(undefinedClasses, [], '样式未定义的 class：' + undefinedClasses.join(', '));
 });
 
+ok('每个列表页都订阅远端变更且都有退订路径', function () {
+  const missing = [];
+  appJson.pages.forEach(function (p) {
+    const js = fs.readFileSync(path.join(ROOT, p + '.js'), 'utf8');
+    if (!/store\.onSync\(/.test(js)) { missing.push(p + ' 未订阅 onSync'); return; }
+    if (!/offSync|this\._unsub\(\)/.test(js)) missing.push(p + ' 订阅后没有退订，监听器会随页面堆积');
+  });
+  assert.deepStrictEqual(missing, [], missing.join('；'));
+});
+
 console.log('\n' + passed + ' / ' + passed + ' 通过');

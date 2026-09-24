@@ -46,11 +46,19 @@ Page({
     this.refresh();
     if (this.data.running && !this.timer) this.startTicker();
     if (this.data.running) this.tick();
+    if (!this._unsub) {
+      this._unsub = store.onSync(function (evt) {
+        // 计时进行中不重算，避免远端回包打断倒计时
+        if (this.data.running) return;
+        if (evt.type === 'watch' || evt.type === 'pull' || evt.type === 'flushed') this.refresh();
+      }.bind(this));
+    }
   },
 
   onHide() {
     clearInterval(this.timer);
     this.timer = null;
+    if (this._unsub) { this._unsub(); this._unsub = null; }
   },
 
   onUnload() {

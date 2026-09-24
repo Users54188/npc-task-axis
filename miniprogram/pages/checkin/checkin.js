@@ -29,6 +29,17 @@ Page({
 
   onShow() {
     this.refresh();
+    this._unsub = store.onSync(function (evt) {
+      if (evt.type === 'watch' || evt.type === 'pull' || evt.type === 'flushed') this.refresh();
+    }.bind(this));
+  },
+
+  onHide() {
+    if (this._unsub) { this._unsub(); this._unsub = null; }
+  },
+
+  onUnload() {
+    if (this._unsub) { this._unsub(); this._unsub = null; }
   },
 
   refresh() {

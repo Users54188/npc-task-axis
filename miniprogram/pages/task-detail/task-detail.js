@@ -38,6 +38,26 @@ Page({
     this.load(query.id, today);
   },
 
+  onShow() {
+    if (!this.data.id) return;
+    this.load(this.data.id, this.data.today);
+    this._unsub = store.onSync(function (evt) {
+      // 编辑中不被远端回包打断，否则用户填到一半会被覆写
+      if (this.data.mode !== 'view') return;
+      if (evt.type === 'watch' || evt.type === 'pull' || evt.type === 'flushed') {
+        this.load(this.data.id, this.data.today);
+      }
+    }.bind(this));
+  },
+
+  onHide() {
+    if (this._unsub) { this._unsub(); this._unsub = null; }
+  },
+
+  onUnload() {
+    if (this._unsub) { this._unsub(); this._unsub = null; }
+  },
+
   load(id, today) {
     const self = this;
     return store.listTasks().then(function () {
