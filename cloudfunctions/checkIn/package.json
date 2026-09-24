@@ -1,0 +1,9 @@
+{
+  "name": "checkIn",
+  "version": "1.0.0",
+  "description": "打卡记录写入、去重与内容安全校验",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

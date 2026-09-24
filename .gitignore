@@ -1,0 +1,12 @@
+node_modules/
+miniprogram_npm/
+.DS_Store
+*.log
+project.private.config.json
+
+# 密钥与真实 AppID 不入库：project.config.json 保持 touristappid，
+# 真实 AppID 与 AppSecret 只填在本地 project.private.config.json / 云开发控制台。
+**/secrets.js
+
+# 生成的预览产物
+output/

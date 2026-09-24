@@ -1,0 +1,170 @@
+{
+  "version": "2026-09-24",
+  "disclaimer": "本库为「常规窗口」参考数据，用于新建任务时自动回填。每年官方公告会调整，节点日期以当年官方通知为准。verify 字段记录了该校验点。",
+  "legend": {
+    "type": "certificate=证书考试 | contest=专业赛事",
+    "window": "[[月,日],[月,日]] 起止",
+    "exam": "{m, wom, wd} = 该月第 wom 个星期 wd（wd: 0=周日…6=周六）；{m, d} = 固定日期",
+    "nextYear": "该节点落在次年"
+  },
+  "entries": [
+    {
+      "key": "cet4", "name": "全国大学英语四级考试", "shortName": "CET-4",
+      "aliases": ["四级", "cet4", "大学英语四级", "CET4", "英语四级"],
+      "type": "certificate", "domain": "英语",
+      "site": "https://cet-bm.neea.edu.cn", "place": "所在院校报名点", "fee": "约 30—60 元（按省）",
+      "cadence": [
+        { "label": "上半年", "reg": [[3, 1], [3, 20]], "admit": [[6, 10], [6, 13]], "exam": { "m": 6, "wom": 3, "wd": 6, "session": "上午" }, "score": { "window": [[8, 16], [8, 26]] } },
+        { "label": "下半年", "reg": [[9, 1], [9, 20]], "admit": [[12, 9], [12, 12]], "exam": { "m": 12, "wom": 3, "wd": 6, "session": "上午" }, "score": { "window": [[2, 16], [2, 26]], "nextYear": true } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 词汇与听力打底", "weeks": 6, "subjects": ["高频词", "精听"], "focus": "高频词 2000 + 真题听力 Section C 逐句精听" },
+        { "name": "阶段二 · 阅读与翻译专项", "weeks": 5, "subjects": ["段落匹配", "翻译"], "focus": "长难句拆解 + 匹配题限时 15 分钟/篇" },
+        { "name": "阶段三 · 真题模考", "weeks": 3, "subjects": ["模考"], "focus": "近 3 套真题严格计时 + 错题回炉" }
+      ],
+      "verify": "考试日为 6/12 月第三个周六上午；报名由本校教务统一组织，窗口可能早于库内默认值"
+    },
+    {
+      "key": "cet6", "name": "全国大学英语六级考试", "shortName": "CET-6",
+      "aliases": ["六级", "cet6", "大学英语六级", "CET6", "英语六级"],
+      "type": "certificate", "domain": "英语",
+      "site": "https://cet-bm.neea.edu.cn", "place": "所在院校报名点", "fee": "约 30—60 元（按省）",
+      "prereq": "多数考点要求 CET-4 ≥ 425 分",
+      "cadence": [
+        { "label": "上半年", "reg": [[3, 1], [3, 20]], "admit": [[6, 10], [6, 13]], "exam": { "m": 6, "wom": 3, "wd": 6, "session": "下午" }, "score": { "window": [[8, 16], [8, 26]] } },
+        { "label": "下半年", "reg": [[9, 1], [9, 20]], "admit": [[12, 9], [12, 12]], "exam": { "m": 12, "wom": 3, "wd": 6, "session": "下午" }, "score": { "window": [[2, 16], [2, 26]], "nextYear": true } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 听力与笔记", "weeks": 5, "subjects": ["讲座听力"], "focus": "讲座/讲话类材料笔记法 + 倍速训练" },
+        { "name": "阶段二 · 仔细阅读与写作", "weeks": 5, "subjects": ["仔细阅读", "作文"], "focus": "定位词法 + 15 分/篇模板内化" },
+        { "name": "阶段三 · 全真模考", "weeks": 3, "subjects": ["模考"], "focus": "下午场生物钟对齐 + 近 3 套真题" }
+      ],
+      "verify": "六级为 6/12 月第三个周六下午；考位紧张院校报名仅开放数日"
+    },
+    {
+      "key": "ncre2ms", "name": "全国计算机等级考试二级 MS Office", "shortName": "NCRE-2 MS",
+      "aliases": ["计算机二级", "二级office", "ncre", "计算机二级office", "ms office", "二级ms"],
+      "type": "certificate", "domain": "计算机",
+      "site": "https://ncre-bm.neea.cn", "place": "自选考点（本省）", "fee": "约 85—140 元（按省）",
+      "cadence": [
+        { "label": "3 月次", "reg": [[12, 1], [12, 20], "prevYear"], "admit": [[3, 2], [3, 9]], "exam": { "m": 3, "wom": 2, "wd": -1, "note": "考前一周内随机半天" }, "score": { "window": [[5, 1], [5, 20]] } },
+        { "label": "9 月次", "reg": [[6, 15], [7, 10]], "admit": [[9, 1], [9, 7]], "exam": { "m": 9, "wom": 1, "wd": -1, "note": "机考分批" }, "score": { "window": [[11, 1], [11, 20]] } },
+        { "label": "12 月次", "reg": [[8, 20], [9, 15]], "admit": [[12, 7], [12, 13]], "exam": { "m": 12, "wom": 2, "wd": -1, "note": "部分省份开设" }, "score": { "window": [[2, 1], [2, 20]], "nextYear": true } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 公共基础", "weeks": 3, "subjects": ["选择题"], "focus": "数据结构与算法 + 数据库 + 程序设计与软件工程" },
+        { "name": "阶段二 · Office 实操", "weeks": 6, "subjects": ["Word", "Excel", "PPT"], "focus": "Word 长文档、Excel 函数与透视表、PPT 母版" },
+        { "name": "阶段三 · 模考题冲刺", "weeks": 3, "subjects": ["模考"], "focus": "题库 300 题 + 每次 5 套限时机考" }
+      ],
+      "verify": "12 月考次仅部分省份开设；机考具体批次由考点分配，报名后需留意考点通知"
+    },
+    {
+      "key": "psc", "name": "普通话水平测试", "shortName": "PSC",
+      "aliases": ["普通话", "普通话测试", "psc", "普通话等级", "普通话二甲"],
+      "type": "certificate", "domain": "语言",
+      "site": "https://www.cltt.org", "place": "本校/本地测试站", "fee": "约 25—50 元",
+      "cadence": [
+        { "label": "校内批次（每月滚动）", "reg": [[3, 1], [3, 15]], "admit": [[3, 20], [3, 27]], "exam": { "m": 4, "d": 12, "note": "以测试站排期为准" }, "score": { "window": [[4, 25], [5, 20]] } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 声韵调纠音", "weeks": 2, "subjects": ["单音节", "多音节"], "focus": "平翘舌、前后鼻音、上声变调" },
+        { "name": "阶段二 · 朗读与作品", "weeks": 2, "subjects": ["朗读作品"], "focus": "60 篇作品抽读 + 语速控制" },
+        { "name": "阶段三 · 命题说话", "weeks": 2, "subjects": ["命题说话"], "focus": "30 题提纲 + 3 分钟不卡壳训练" }
+      ],
+      "verify": "测试站每月自设批次，报名窗口差异极大，务必以本站公告为准"
+    },
+    {
+      "key": "tegce-pen", "name": "中小学教师资格笔试", "shortName": "教资笔试",
+      "aliases": ["教资", "教师资格证", "教资笔试", "笔试", "tegce", "资格证"],
+      "type": "certificate", "domain": "教育",
+      "site": "https://ntcc.neea.cn", "place": "就读学校所在地报考点", "fee": "约 50—80 元/科",
+      "cadence": [
+        { "label": "上半年", "reg": [[1, 5], [1, 15]], "admit": [[3, 2], [3, 8]], "exam": { "m": 3, "wom": 2, "wd": 6 }, "score": { "window": [[4, 15], [4, 25]] } },
+        { "label": "下半年", "reg": [[7, 3], [7, 13]], "admit": [[9, 1], [9, 7]], "exam": { "m": 9, "wom": 2, "wd": 6 }, "score": { "window": [[11, 1], [11, 10]] } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 综合素质", "weeks": 4, "subjects": ["职业理念", "法规", "写作"], "focus": "材料分析题模板 + 作文素材 20 则" },
+        { "name": "阶段二 · 教育知识/学科知识", "weeks": 5, "subjects": ["教育学", "心理学"], "focus": "背诵框架 + 简答题高频 60 条" },
+        { "name": "阶段三 · 真题套卷", "weeks": 2, "subjects": ["模考"], "focus": "近 5 年真题限时 + 主观题批改" }
+      ],
+      "verify": "科目一/二/三按学段不同；面试需笔试通过后报名"
+    },
+    {
+      "key": "tegce-int", "name": "中小学教师资格面试", "shortName": "教资面试",
+      "aliases": ["教资面试", "面试", "试讲", "结构化面试"],
+      "type": "certificate", "domain": "教育",
+      "site": "https://ntcc.neea.cn", "place": "笔试同区报考点", "fee": "约 180—260 元",
+      "prereq": "笔试各科成绩合格且在有效期内",
+      "cadence": [
+        { "label": "上半年", "reg": [[4, 15], [4, 25]], "admit": [[5, 5], [5, 12]], "exam": { "m": 5, "wom": 2, "wd": -1 }, "score": { "window": [[6, 10], [6, 20]] } },
+        { "label": "下半年", "reg": [[11, 1], [11, 10]], "admit": [[12, 1], [12, 7]], "exam": { "m": 12, "wom": 2, "wd": -1 }, "score": { "window": [[2, 1], [2, 15]], "nextYear": true } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 结构化问答", "weeks": 2, "subjects": ["自我认知", "应急应变"], "focus": "6 大题型答题框架 + 每日 10 题口述" },
+        { "name": "阶段二 · 试讲", "weeks": 3, "subjects": ["试讲"], "focus": "分学科 10 篇逐字稿 + 无生试讲录像复盘" },
+        { "name": "阶段三 · 答辩与仪态", "weeks": 1, "subjects": ["答辩"], "focus": "板书规范 + 全真流程 20 分钟压时" }
+      ],
+      "verify": "面试考期由省级考试机构安排，批次为两天或三天"
+    },
+    {
+      "key": "lanqiao", "name": "蓝桥杯全国软件和信息技术专业人才大赛", "shortName": "蓝桥杯",
+      "aliases": ["蓝桥", "蓝桥杯", "lanqiao", "c/c++组", "python组", "java组"],
+      "type": "contest", "domain": "计算机",
+      "site": "https://dasai.lanqiao.cn", "place": "线上报名 + 本地省赛考点", "fee": "约 300 元/人（软件类）",
+      "cadence": [
+        { "label": "第 N 届", "reg": [[12, 1], [3, 31]], "admit": [[3, 25], [4, 10]], "exam": { "m": 4, "wom": 1, "wd": -1, "note": "省赛单日" }, "score": { "window": [[5, 10], [5, 31]] } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 算法基础", "weeks": 6, "subjects": ["枚举", "模拟", "排序"], "focus": "每日 3 题，重点是暴力解与边界处理" },
+        { "name": "阶段二 · 搜索与 DP", "weeks": 6, "subjects": ["DFS/BFS", "动态规划"], "focus": "状态设计 40 例 + 记忆化改写" },
+        { "name": "阶段三 · 真题拉练", "weeks": 4, "subjects": ["模考"], "focus": "近 5 届省赛 4 小时全真限时" }
+      ],
+      "verify": "校赛/省赛/国赛三级，国赛一般在 5—6 月；报名费与组别以当年章程为准"
+    },
+    {
+      "key": "cumcm", "name": "高教社杯全国大学生数学建模竞赛", "shortName": "国赛数模",
+      "aliases": ["数模", "数学建模", "cumcm", "国赛数模", "建模"],
+      "type": "contest", "domain": "数学",
+      "site": "https://www.mcm.edu.cn", "place": "本校组委会报名点", "fee": "约 300 元/队（三人）",
+      "cadence": [
+        { "label": "年度", "reg": [[7, 1], [8, 31]], "admit": [[9, 1], [9, 4]], "exam": { "m": 9, "wom": 3, "wd": 4, "note": "周四 18:00 开赛，72 小时" }, "score": { "window": [[11, 15], [12, 15]] } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 模型库", "weeks": 5, "subjects": ["评价类", "优化类", "预测类"], "focus": "10 类经典模型 + 适用条件卡片" },
+        { "name": "阶段二 · 软件与写作", "weeks": 4, "subjects": ["MATLAB/Python", "论文"], "focus": "Lingo + 图表规范 + 摘要模板" },
+        { "name": "阶段三 · 全真三题", "weeks": 3, "subjects": ["模考"], "focus": "两次完整 72 小时演练 + 一次评阅复盘" }
+      ],
+      "verify": "开赛日为 9 月第三个星期四（具体以当年通知为准），赛区报名截止时间由校内组委会设定"
+    },
+    {
+      "key": "daguang", "name": "全国大学生广告艺术大赛", "shortName": "大广赛",
+      "aliases": ["大广赛", "广告艺术大赛", "学院奖", "daguang"],
+      "type": "contest", "domain": "设计/传媒",
+      "site": "https://www.sun-ada.net", "place": "线上提交作品", "fee": "免费",
+      "cadence": [
+        { "label": "年度", "reg": [[3, 1], [4, 20]], "admit": [[4, 21], [4, 30]], "exam": { "m": 4, "d": 30, "note": "作品提交截止" }, "score": { "window": [[6, 20], [7, 31]] } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 策略与命题解读", "weeks": 3, "subjects": ["命题策略单"], "focus": "选 2—3 个命题 + 消费者洞察提炼" },
+        { "name": "阶段二 · 创意产出", "weeks": 5, "subjects": ["平面", "视频", "文案"], "focus": "每命题 3 版草案 + 内部互评" },
+        { "name": "阶段三 · 规范化投稿", "weeks": 2, "subjects": ["投稿"], "focus": "格式/尺寸/授权书合规 + 重复提交检查" }
+      ],
+      "verify": "截稿日与命题企业清单每年更换，投稿前必须回官网核对"
+    },
+    {
+      "key": "cgdc", "name": "中国大学生计算机设计大赛", "shortName": "计设大赛",
+      "aliases": ["计算机设计大赛", "计设", "cgdc", "4c"],
+      "type": "contest", "domain": "计算机",
+      "site": "https://jsjds.blcu.edu.cn", "place": "校内选拔 → 省赛 → 国赛", "fee": "免费（部分省赛收材料费）",
+      "cadence": [
+        { "label": "年度", "reg": [[2, 20], [4, 15]], "admit": [[4, 16], [4, 30]], "exam": { "m": 5, "wom": 2, "wd": -1, "note": "省赛评审/现场赛" }, "score": { "window": [[6, 1], [6, 30]] } }
+      ],
+      "stages": [
+        { "name": "阶段一 · 选题与作品形态", "weeks": 4, "subjects": ["类目选择"], "focus": "对齐当年 11 大类目 + 确定作品交付形态" },
+        { "name": "阶段二 · 作品开发", "weeks": 8, "subjects": ["开发", "设计说明"], "focus": "可运行 Demo + 5 分钟演示视频" },
+        { "name": "阶段三 · 材料包与答辩", "weeks": 2, "subjects": ["申报书"], "focus": "查重/原创声明 + 路演 PPT 压时" }
+      ],
+      "verify": "类目每年调整，作品上传截止与省赛时间由各省赛区通知"
+    }
+  ]
+}

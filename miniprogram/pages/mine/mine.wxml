@@ -1,0 +1,58 @@
+<view class="hero">
+  <view class="hero-t">👾 我的<text class="hero-lv" wx:if="{{stats}}">Lv.{{stats.level.lv}} {{stats.level.name}}</text></view>
+  <view class="hero-s" wx:if="{{stats}}">{{stats.level.chapter}} · {{stats.level.exp}} / {{stats.level.need}} EXP</view>
+</view>
+
+<view class="pad">
+  <view class="card" wx:if="{{stats}}">
+    <view class="bar"><view class="fill" style="width:{{stats.level.percent}}%"></view></view>
+    <view class="kv"><text>连续 {{stats.streak}} 天 · 最长 {{stats.longest}} 天</text><text>徽章 {{earnedCount}}/{{badges.length}}</text></view>
+  </view>
+
+  <view class="card pet" bindtap="onPet">
+    <view class="pet-avatar">👾</view>
+    <view class="pet-body">
+      <view class="pet-name">小紫<text class="muted">（点一下换句话）</text></view>
+      <view class="pet-line">{{petLine}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="ct">🏅 徽章墙</view>
+    <view class="badges">
+      <view wx:for="{{badges}}" wx:key="key" class="bdg {{item.earned ? 'on' : ''}}">
+        <text class="bi">{{item.icon}}</text>
+        <text class="bn">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="ct">☁️ 数据与同步</view>
+    <view class="row"><text class="rl">存储模式</text><text class="rv {{offline ? 'warn' : 'ok'}}">{{offline ? '本地存储' : '云开发在线'}}</text></view>
+    <view class="row"><text class="rl">云环境 ID</text><text class="rv">{{cloudEnv}}</text></view>
+    <view class="row"><text class="rl">订阅模板</text><text class="rv {{hasTemplate ? 'ok' : 'warn'}}">{{hasTemplate ? '已配置' : '未配置'}}</text></view>
+    <view class="row"><text class="rl">知识库版本</text><text class="rv">{{kbVersion}}</text></view>
+    <view class="row"><text class="rl">任务 / 打卡</text><text class="rv">{{taskCount}} / {{checkCount}}</text></view>
+    <view class="row"><text class="rl">待同步操作</text><text class="rv">{{pendingSync}}</text></view>
+    <view class="btn btn-p" bindtap="onSyncNow">立即同步</view>
+    <view class="btn btn-g" bindtap="onExport">导出 JSON 到剪贴板</view>
+    <view class="btn btn-g danger" bindtap="onClear">清空本地数据</view>
+  </view>
+
+  <view class="card" wx:if="{{setup}}">
+    <view class="ct">🧾 上线配置清单<text class="ct-small">{{setup.summary}}</text></view>
+    <view class="srow" wx:for="{{setup.items}}" wx:key="key">
+      <text class="sname">{{item.label}}</text>
+      <text class="schip s-{{item.status}}">{{item.status === 'done' ? '已配置' : item.status === 'pending' ? '待填' : item.status === 'cloud' ? '云端核对' : '暂不开'}}</text>
+      <view class="swhere muted">{{item.where}}</view>
+      <view class="show">{{item.how}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="ct">ℹ️ 说明</view>
+    <view class="muted txt">时间轴与备考计划来自内置知识库检索匹配，运行时不调用任何生成式 AI 能力；桌宠台词为本地预设。考试日期为常规窗口，以当年官方公告为准。</view>
+    <view class="btn btn-g" bindtap="onAbout">查看合规说明</view>
+  </view>
+</view>

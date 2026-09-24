@@ -1,0 +1,32 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "compileType": "miniprogram",
+  "projectname": "npc-task-axis",
+  "appid": "touristappid",
+  "libVersion": "3.5.5",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhanceCompile": true,
+    "postcss": true,
+    "minified": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "checkInvalidKey": true,
+    "packNpmManually": false,
+    "packNpmRelationList": []
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        { "name": "时间轴首页", "pathName": "pages/timeline/timeline", "query": "" },
+        { "name": "任务详情", "pathName": "pages/task-detail/task-detail", "query": "id=demo-cet4" },
+        { "name": "阶段打卡", "pathName": "pages/checkin/checkin", "query": "" },
+        { "name": "专注", "pathName": "pages/focus/focus", "query": "" }
+      ]
+    }
+  }
+}

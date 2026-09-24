@@ -1,0 +1,9 @@
+{
+  "name": "recognize",
+  "version": "1.0.0",
+  "description": "从报名表/通知文字抽取结构化任务节点（AI 未启用时返回 501）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,72 @@
+<view class="hero">
+  <view class="hero-t">✅ 阶段打卡
+    <text class="hero-lv">{{monthText}}</text>
+  </view>
+  <view class="hero-s" wx:if="{{stats}}">本月已打卡 {{stats.checkIns}} 次 · 连续 {{stats.streak}} 天 · 最长 {{stats.longest}} 天</view>
+</view>
+
+<view class="pad">
+  <view class="stats" wx:if="{{stats}}">
+    <view class="stat"><text class="num">{{stats.checkIns}}</text><text class="cap">累计打卡</text></view>
+    <view class="stat"><text class="num">{{stats.streak}}</text><text class="cap">连续天数</text></view>
+    <view class="stat"><text class="num">{{stats.longest}}</text><text class="cap">最长连击</text></view>
+    <view class="stat"><text class="num">{{badgeCount}}</text><text class="cap">徽章</text></view>
+  </view>
+
+  <view class="card">
+    <view class="mnav">
+      <text class="marrow" bindtap="onPrevMonth">‹ 上月</text>
+      <text class="mtitle">{{monthText}}</text>
+      <text class="marrow" bindtap="onNextMonth">下月 ›</text>
+    </view>
+    <view class="wk">
+      <text wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this" class="wkc">{{item}}</text>
+    </view>
+    <view class="cal">
+      <view wx:for="{{cells}}" wx:key="key" class="cell c-{{item.state}}"
+            bindtap="onCell" data-i="{{index}}">
+        <text wx:if="{{item.inMonth}}">{{item.day}}</text>
+      </view>
+    </view>
+    <view class="legend muted">绿=已打卡 · 红=可补卡 · 紫框=今天</view>
+  </view>
+
+  <view class="card" wx:if="{{tasks.length}}">
+    <view class="ct">选择任务</view>
+    <view class="chips">
+      <text wx:for="{{tasks}}" wx:key="_id"
+            class="chip {{taskId === item._id ? 'chip-on' : ''}}"
+            bindtap="onPickTask" data-id="{{item._id}}">{{item.shortName || item.name}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{stages.length}}">
+    <view class="ct">📚 阶段进度<text class="ct-small">{{task.name}}</text></view>
+    <view class="sg" wx:for="{{stages}}" wx:key="idx">
+      <view class="sg-top">
+        <text class="sg-n">{{item.name}}</text>
+        <text class="sg-p">{{item.done}}/{{item.total}} · {{item.percent}}%</text>
+      </view>
+      <view class="bar"><view class="fill" style="width:{{item.percent}}%"></view></view>
+      <view class="sg-f muted">{{item.focus}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="ct">✍️ 打卡<text class="ct-small" wx:if="{{form.date}}">补卡 {{form.date}}</text></view>
+    <view class="field">
+      <text class="fl">科目</text>
+      <input class="fi" placeholder="如 Excel 函数" value="{{form.subject}}" bindinput="onForm" data-field="subject" />
+    </view>
+    <view class="field">
+      <text class="fl">阶段</text>
+      <input class="fi" placeholder="默认当前阶段" value="{{form.stage}}" bindinput="onForm" data-field="stage" />
+    </view>
+    <view class="field">
+      <text class="fl">备注</text>
+      <input class="fi" placeholder="今天学了什么" value="{{form.note}}" bindinput="onForm" data-field="note" />
+    </view>
+    <view class="btn btn-p" bindtap="onSubmit">{{form.date ? '补卡并计入' : '完成今日打卡 +5 EXP'}}</view>
+    <view class="btn btn-g" bindtap="onNewTask" wx:if="{{!tasks.length}}">先去接一个任务</view>
+  </view>
+</view>

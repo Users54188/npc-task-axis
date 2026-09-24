@@ -1,0 +1,56 @@
+<view class="hero">
+  <view class="hero-t">⏲ 专注<text class="hero-lv">今日 {{todayCount}} 段 / {{todayMinutes}} min</text></view>
+  <view class="hero-s">专注结束自动写入打卡记录，切后台也能算准时间</view>
+</view>
+
+<view class="pad">
+  <view class="card">
+    <view class="ct">计时任务</view>
+    <view class="chips" wx:if="{{tasks.length}}">
+      <text wx:for="{{tasks}}" wx:key="_id" class="chip {{taskId === item._id ? 'chip-on' : ''}}"
+            bindtap="onPickTask" data-id="{{item._id}}">{{item.shortName || item.name}}</text>
+    </view>
+    <view class="empty" wx:else>还没有任务，先去时间轴接一个</view>
+  </view>
+
+  <view class="card timer">
+    <view class="mode-pills">
+      <text class="pill {{mode === 'focus' ? 'on' : ''}}" bindtap="onMode" data-mode="focus">25 专注</text>
+      <text class="pill {{mode === 'short' ? 'on' : ''}}" bindtap="onMode" data-mode="short">5 短休</text>
+      <text class="pill {{mode === 'long' ? 'on' : ''}}" bindtap="onMode" data-mode="long">15 长休</text>
+    </view>
+
+    <view class="clock">{{remainText}}</view>
+    <view class="clock-l muted">{{modeLabel}} · 已完成 {{finished}} 段 · 每 4 段一次长休</view>
+
+    <view class="track"><view class="fill" style="width:{{percent}}%"></view></view>
+
+    <view class="acts">
+      <view class="act main" wx:if="{{!running}}" bindtap="start">开 始</view>
+      <view class="act main" wx:else bindtap="pause">暂 停</view>
+      <view class="act" bindtap="reset">重 置</view>
+      <view class="act" wx:if="{{running}}" bindtap="onFinishNow">结束并记录</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="ct">🏷 学习标签<text class="ct-small">写入打卡记录的科目</text></view>
+    <view class="chips">
+      <text class="chip {{tag === item ? 'chip-on' : ''}}" wx:for="{{tags}}" wx:key="*this"
+            bindtap="onTag" data-tag="{{item}}">{{item}}</text>
+      <text class="chip add" bindtap="onAddTag">＋</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{stats}}">
+    <view class="ct">📊 专注统计</view>
+    <view class="kv"><text>累计专注</text><text>{{stats.focusCount}} 段 / {{stats.focusMinutes}} 分钟</text></view>
+    <view class="kv"><text>连续打卡</text><text>{{stats.streak}} 天</text></view>
+    <view class="kv"><text>当前经验</text><text>Lv.{{stats.level.lv}} · {{stats.level.exp}} EXP</text></view>
+  </view>
+
+  <view class="note">
+    计时用时间戳基准：只记开始时刻与剩余秒数，每次刷新用当前时间反算。
+    小程序切后台会挂起 JS 回调，累加式计时会算错，这里回到前台即自动校正。
+  </view>
+</view>

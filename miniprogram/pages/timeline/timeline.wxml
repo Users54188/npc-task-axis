@@ -1,0 +1,56 @@
+<view class="hero">
+  <view class="hero-t">🗺 大学 NPC 任务轴
+    <text class="hero-lv" wx:if="{{level}}">Lv.{{level.lv}} {{level.chapter}}</text>
+  </view>
+  <view class="hero-s">报名 · 准考证 · 考试 · 查分，接任务打怪升级不漏节点</view>
+</view>
+
+<view class="pad">
+  <view class="stats">
+    <view class="stat"><text class="num">{{stats ? stats.tasks : 0}}</text><text class="cap">任务节点</text></view>
+    <view class="stat"><text class="num">{{stats ? stats.registered : 0}}</text><text class="cap">已接任务</text></view>
+    <view class="stat"><text class="num alert">{{alerts}}</text><text class="cap">临期告警</text></view>
+    <view class="stat"><text class="num">{{stats ? stats.checkIns : 0}}</text><text class="cap">累计打卡</text></view>
+  </view>
+
+  <view class="card" wx:if="{{level}}">
+    <view class="ct">📜 {{level.chapter}}<text class="ct-small">剧情推进</text></view>
+    <view class="bar"><view class="fill" style="width:{{level.percent}}%"></view></view>
+    <view class="kv"><text>{{level.exp}} / {{level.need}} EXP · {{level.name}}</text><text>连续 {{stats.streak}} 天</text></view>
+  </view>
+
+  <view class="seg">
+    <view class="seg-item {{seg === 'certificate' ? 'seg-on' : ''}}" bindtap="onSeg" data-seg="certificate">📕 通用证书</view>
+    <view class="seg-item {{seg === 'contest' ? 'seg-on' : ''}}" bindtap="onSeg" data-seg="contest">🏆 专业赛事</view>
+  </view>
+
+  <view class="card">
+    <view class="ct">⏱ NPC 时间轴<text class="ct-small">{{today}} · 按真实日期排序</text></view>
+
+    <view class="tl" wx:if="{{shown.length}}">
+      <view
+        wx:for="{{shown}}"
+        wx:key="id"
+        class="nd {{item.hot ? 'nd-hot' : ''}} {{item.state === 'past' ? 'nd-past' : ''}}"
+        bindtap="onTask"
+        data-id="{{item.taskId}}">
+        <view class="nd-d">{{item.dateText}}<text wx:if="{{item.approx}}" class="nd-ap">约</text></view>
+        <view class="nd-n">{{item.taskName}}
+          <text class="tag {{item.tagClass}}">{{item.label}} · {{item.subText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:elif="{{!loading}}">
+      这条线上还没有任务
+      <view class="btn btn-g" bindtap="onSeed">载入示例任务</view>
+    </view>
+  </view>
+
+  <view class="btn btn-p" bindtap="onNew">＋ 接新任务</view>
+  <view class="btn btn-g" bindtap="onMakeImage">生成任务轴长图</view>
+
+  <canvas type="2d" id="axisCanvas" class="offscreen"></canvas>
+
+  <view class="hint" wx:if="{{offline}}">当前为本地存储模式：配置云开发环境 ID 后自动切换为在线存储与双向同步。</view>
+</view>

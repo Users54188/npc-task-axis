@@ -1,0 +1,180 @@
+<!-- ========== 查看态 ========== -->
+<block wx:if="{{mode === 'view' && task}}">
+  <view class="hero">
+    <view class="hero-t">{{task.name}}
+      <text class="hero-lv">{{task.type === 'certificate' ? '通用证书' : '专业赛事'}}</text>
+    </view>
+    <view class="hero-s">{{task.shortName}}{{task.domain ? ' · ' + task.domain : ''}}</view>
+  </view>
+
+  <view class="pad">
+    <view class="count" wx:if="{{countdown}}">
+      <text class="num">{{countdown.text}}</text>
+      <text class="cap">{{countdown.overdue ? '考试已结束' : '天后考试 · ' + task.examDate}}</text>
+    </view>
+    <view class="count-off" wx:else>
+      <text>尚未标记「已报名」，开启后生成考试倒计时</text>
+    </view>
+
+    <view class="card">
+      <view class="ct">🗺 四个关键节点<text class="ct-small">{{today}}</text></view>
+      <view class="tl" wx:if="{{nodes.length}}">
+        <view wx:for="{{nodes}}" wx:key="id"
+              class="nd {{item.hot ? 'nd-hot' : ''}} {{item.state === 'past' ? 'nd-past' : ''}}">
+          <view class="nd-d">{{item.dateText}}</view>
+          <view class="nd-n">{{item.label}}
+            <text class="tag {{item.tagClass}}">{{item.subText}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty" wx:else>还没排入任何节点</view>
+    </view>
+
+    <view class="card">
+      <view class="ct">📋 报名信息</view>
+      <view class="grid">
+        <view class="mini"><view class="l">报名费用</view><view class="v">{{task.fee || '—'}}</view></view>
+        <view class="mini"><view class="l">报名地点</view><view class="v">{{task.place || '—'}}</view></view>
+      </view>
+      <view class="mini wide">
+        <view class="l">报名网站</view>
+        <view class="v link">{{task.site || '—'}}</view>
+        <view class="foot">
+          <text class="muted">个人主体不支持 web-view</text>
+          <text class="copy" bindtap="onCopySite">复制链接 ↗</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{task.plan && task.plan.length}}">
+      <view class="ct">🧭 备考计划<text class="ct-small">知识库自动匹配</text></view>
+      <view class="stage" wx:for="{{task.plan}}" wx:key="idx">
+        <view class="s-n">{{item.name}}</view>
+        <view class="s-f">{{item.focus}}</view>
+        <view class="s-d muted">{{item.start}} ~ {{item.end}} · {{item.weeks}} 周</view>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{task.verify}}">
+      <view class="ct">⚠️ 需人工核对</view>
+      <view class="muted vtext">{{task.verify}}</view>
+    </view>
+
+    <view class="btn btn-p" bindtap="onToggleRegistered">
+      {{task.registered ? '撤销「已报名」' : '切换为「已报名」→ 开启倒计时'}}
+    </view>
+    <view class="btn btn-g" bindtap="onGoCheckin">去打卡（已打卡 {{checkCount}} 次）</view>
+    <view class="btn-row">
+      <view class="btn-half" bindtap="onEdit">编辑</view>
+      <view class="btn-half danger" bindtap="onDelete">删除</view>
+    </view>
+  </view>
+</block>
+
+<!-- ========== 编辑 / 新建态 ========== -->
+<block wx:if="{{mode === 'edit'}}">
+  <view class="hero">
+    <view class="hero-t">{{id ? '编辑任务' : '接新任务'}}</view>
+    <view class="hero-s">输入名称可从内置知识库匹配常规时间与阶段计划</view>
+  </view>
+
+  <view class="pad">
+    <view class="card">
+      <view class="field">
+        <text class="fl">任务名称</text>
+        <input class="fi" placeholder="如：计算机二级" value="{{draft.name}}" bindinput="onNameInput" data-field="name" />
+      </view>
+
+      <view class="match" wx:if="{{matched}}">
+        <view class="m-t">命中：{{matched.name}}（{{matched.cadenceLabel}}）</view>
+        <view class="m-k muted">报名 {{matched.regStart}}~{{matched.regEnd}} · 考试 {{matched.examDate}} · {{matched.stageCount}} 个阶段</view>
+        <view class="m-v muted">{{matched.verify}}</view>
+        <view class="m-b" bindtap="onApplyMatch">应用常规时间与计划</view>
+      </view>
+
+      <view class="quick">
+        <text class="quick-l muted">或直接从知识库选：</text>
+        <text class="chip" wx:for="{{kbList}}" wx:key="key"
+              bindtap="onPickFromKb" data-key="{{item.key}}">{{item.shortName}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="ct" bindtap="onRecToggle">🔎 从报名表文字识别<text class="ct-small">{{rec.open ? '收起' : '展开'}}</text></view>
+      <block wx:if="{{rec.open}}">
+        <textarea class="rec-area" placeholder="把报名表或考试通知里的文字粘贴到这里"
+                  value="{{rec.text}}" bindinput="onRecInput" maxlength="2000" auto-height></textarea>
+        <view class="rec-msg muted" wx:if="{{rec.msg}}">{{rec.msg}}</view>
+        <view class="btn btn-p" bindtap="onRecRun">{{rec.busy ? '识别中…' : '识别并回填空字段'}}</view>
+        <view class="muted tip">识别只补齐你没填的字段，不覆盖已填内容；服务未开启时请直接用上面的知识库匹配。</view>
+      </block>
+    </view>
+
+    <view class="card">
+      <view class="ct">基本信息</view>
+      <view class="field">
+        <text class="fl">简称</text>
+        <input class="fi" placeholder="CET-4" value="{{draft.shortName}}" bindinput="onField" data-field="shortName" />
+      </view>
+      <view class="field">
+        <text class="fl">类型</text>
+        <picker class="fi pick" mode="selector" range="{{['通用证书','专业赛事']}}" bindchange="onType">
+          <text>{{draft.type === 'certificate' ? '通用证书' : '专业赛事'}}</text>
+        </picker>
+      </view>
+      <view class="field">
+        <text class="fl">报名网站</text>
+        <input class="fi" placeholder="https://…" value="{{draft.site}}" bindinput="onField" data-field="site" />
+      </view>
+      <view class="field">
+        <text class="fl">报名地点</text>
+        <input class="fi" placeholder="本校考点" value="{{draft.place}}" bindinput="onField" data-field="place" />
+      </view>
+      <view class="field">
+        <text class="fl">报名费用</text>
+        <input class="fi" placeholder="90 元" value="{{draft.fee}}" bindinput="onField" data-field="fee" />
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="ct">关键日期</view>
+      <view class="drow">
+        <picker mode="date" value="{{draft.regStart}}" bindchange="onDate" data-field="regStart">
+          <view class="dc"><text class="dl">报名起</text><text class="dv">{{draft.regStart || '选择'}}</text></view>
+        </picker>
+        <picker mode="date" value="{{draft.regEnd}}" bindchange="onDate" data-field="regEnd">
+          <view class="dc"><text class="dl">报名止</text><text class="dv">{{draft.regEnd || '选择'}}</text></view>
+        </picker>
+      </view>
+      <view class="drow">
+        <picker mode="date" value="{{draft.admitStart}}" bindchange="onDate" data-field="admitStart">
+          <view class="dc"><text class="dl">准考证起</text><text class="dv">{{draft.admitStart || '选择'}}</text></view>
+        </picker>
+        <picker mode="date" value="{{draft.admitEnd}}" bindchange="onDate" data-field="admitEnd">
+          <view class="dc"><text class="dl">准考证止</text><text class="dv">{{draft.admitEnd || '选择'}}</text></view>
+        </picker>
+      </view>
+      <view class="drow">
+        <picker mode="date" value="{{draft.examDate}}" bindchange="onDate" data-field="examDate">
+          <view class="dc"><text class="dl">考试日</text><text class="dv strong">{{draft.examDate || '必填'}}</text></view>
+        </picker>
+        <picker mode="date" value="{{draft.scoreStart}}" bindchange="onDate" data-field="scoreStart">
+          <view class="dc"><text class="dl">查分起</text><text class="dv">{{draft.scoreStart || '选择'}}</text></view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="ct">备考计划<text class="ct-small">{{draft.plan.length || 0}} 个阶段</text></view>
+      <view class="prow" wx:for="{{draft.plan}}" wx:key="idx">
+        <input class="pi" placeholder="阶段名称" value="{{item.name}}" bindinput="onStageField" data-field="name" data-i="{{index}}" />
+        <input class="pi" placeholder="本阶段重点" value="{{item.focus}}" bindinput="onStageField" data-field="focus" data-i="{{index}}" />
+        <text class="pdel" bindtap="onStageDel" data-i="{{index}}">删除</text>
+      </view>
+      <view class="padd" bindtap="onAddStage">＋ 添加阶段</view>
+    </view>
+
+    <view class="btn btn-p" bindtap="onSave">保存任务</view>
+    <view class="btn btn-g" bindtap="onCancel">取消</view>
+  </view>
+</block>

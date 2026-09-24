@@ -1,0 +1,9 @@
+{
+  "name": "taskNode",
+  "version": "1.0.0",
+  "description": "任务节点表服务端 CRUD 与日期单调校验",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

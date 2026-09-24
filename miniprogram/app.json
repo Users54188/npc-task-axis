@@ -1,0 +1,33 @@
+{
+  "pages": [
+    "pages/timeline/timeline",
+    "pages/task-detail/task-detail",
+    "pages/checkin/checkin",
+    "pages/focus/focus",
+    "pages/mine/mine"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#6C4BE8",
+    "navigationBarTitleText": "大学 NPC 任务轴",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F4F5F8"
+  },
+  "tabBar": {
+    "color": "#9A98A3",
+    "selectedColor": "#6C4BE8",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/timeline/timeline", "text": "时间轴" },
+      { "pagePath": "pages/checkin/checkin", "text": "打卡" },
+      { "pagePath": "pages/focus/focus", "text": "专注" },
+      { "pagePath": "pages/mine/mine", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {},
+  "requiredPrivateInfos": []
+}

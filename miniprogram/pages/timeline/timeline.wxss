@@ -1,0 +1,13 @@
+.hint {
+  margin-top: 24rpx; font-size: 21rpx; color: #9A98A3; line-height: 1.75;
+  padding: 18rpx 22rpx; background: #EFEBFF; border-radius: 16rpx;
+}
+
+/* 长图用离屏画布：必须在渲染树里才能取到 node，但不能占版面 */
+.offscreen {
+  position: fixed;
+  left: 3000rpx;
+  top: 0;
+  width: 375px;
+  height: 1200px;
+}
