@@ -20,6 +20,7 @@ npm test          # 202 个测试用例全绿
 npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/preview/pages-preview.html
 npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填的〔占位〕
 npm run fill -- --appid=wx… --env=… --tmpl=… --remind=@remind.json   # 一条命令填完三处并校验自洽
+npm run review    # 生成 output/submission/知识库核对表.md：10 条考期按小程序实际回填值列出待人工终审
 ```
 
 页面用 `tests/helpers/page-harness.js` 直接驱动真实 `Page` 对象的生命周期与事件处理
