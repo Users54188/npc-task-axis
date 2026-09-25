@@ -80,4 +80,20 @@ ok('清单条目不重复', function () {
   assert.strictEqual(new Set(keys).size, keys.length, keys.join(','));
 });
 
+ok('订阅请求真机失败会被清单逮住，而不是静默吞掉', function () {
+  const withErr = setup.audit({ lastSubError: 'requestSubscribeMessage:fail bad template' });
+  assert.strictEqual(withErr.errored, 1, '应多出一条运行时报错项');
+  assert.strictEqual(withErr.ready, false, '有报错时不能报 ready');
+  const m = byKey(withErr.items);
+  assert.strictEqual(m.subErr.status, 'error');
+  assert.ok(m.subErr.how.indexOf('requestSubscribeMessage:fail') >= 0,
+    '清单只渲染 how，报错原文必须落在 how 里才看得见');
+  assert.ok(withErr.summary.indexOf('运行时报错') >= 0, withErr.summary);
+});
+
+ok('没有订阅报错时不凭空多出 error 条目', function () {
+  assert.strictEqual(setup.audit().errored, 0);
+  assert.strictEqual(byKey(setup.audit().items).subErr, undefined);
+});
+
 console.log('\n' + passed + ' / ' + passed + ' 通过');

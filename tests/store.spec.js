@@ -221,6 +221,13 @@ ok('离线写入 → flush 回填云端主键 → 再 pull 不产生重复行', 
   });
 });
 
+ok('订阅消息真机失败原因写得进、读得出（清单靠它显示）', function () {
+  const { store } = fresh(true);
+  assert.strictEqual(store.lastSubscribeError(), '', '没失败过就不该报出错误');
+  store.subscribeError('requestSubscribeMessage:fail bad template id');
+  assert.strictEqual(store.lastSubscribeError(), 'requestSubscribeMessage:fail bad template id');
+});
+
 ok('uid 首次生成后复用', function () {
   const { store } = fresh(true);
   const a = store.uid();

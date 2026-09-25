@@ -280,6 +280,20 @@ ok('说明文档的「提交前必须补齐」清单与正文占位一一对应'
     '清单列了正文里不存在的占位：');
 });
 
+ok('配置清单每个 status 都有 chip 样式与文案（动态 class 逃得过 class 守卫）', function () {
+  const setup = require(path.join(ROOT, 'utils', 'setup.js'));
+  const rows = setup.audit().items.concat(setup.audit({ lastSubError: 'x' }).items);
+  const statuses = Array.from(new Set(rows.map(function (i) { return i.status; })));
+  assert.ok(statuses.length >= 4, '状态种类不该少于已知的 done/pending/cloud/blocked');
+  const dir = path.join(ROOT, 'pages', 'mine');
+  const wxss = fs.readFileSync(path.join(dir, 'mine.wxss'), 'utf8');
+  const wxml = fs.readFileSync(path.join(dir, 'mine.wxml'), 'utf8');
+  const noStyle = statuses.filter(function (s) { return wxss.indexOf('.s-' + s) < 0; });
+  const noText = statuses.filter(function (s) { return wxml.indexOf("'" + s + "'") < 0; });
+  assert.deepStrictEqual(noStyle, [], '这些 status 没有对应 chip 样式：' + noStyle.join('、'));
+  assert.deepStrictEqual(noText, [], '这些 status 在模板里没有对应文案，会掉进兜底显示：' + noText.join('、'));
+});
+
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
 if (failures.length) {
   console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));

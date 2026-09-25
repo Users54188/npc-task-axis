@@ -40,5 +40,6 @@
 .s-pending { background: #FFECEE; color: #F2555A; }
 .s-cloud { background: #FFF4DC; color: #8A5B00; }
 .s-blocked { background: #F0EFF5; color: #9A98A3; }
+.s-error { background: #F2555A; color: #FFFFFF; }
 .swhere { font-size: 20rpx; margin-top: 4rpx; clear: both; }
 .show { font-size: 20rpx; color: #6B6A75; line-height: 1.6; margin-top: 2rpx; }

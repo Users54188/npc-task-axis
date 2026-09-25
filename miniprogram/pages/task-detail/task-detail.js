@@ -243,7 +243,7 @@ Page({
       wx.requestSubscribeMessage({
         tmplIds: ids,
         success(res) { ids.forEach(function (t) { store.subscribeLog(t, res[t] === 'accept'); }); resolve(); },
-        fail() { resolve(); }
+        fail(err) { store.subscribeError((err && err.errMsg) || err); resolve(); }
       });
     });
 

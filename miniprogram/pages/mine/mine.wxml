@@ -44,7 +44,7 @@
     <view class="ct">🧾 上线配置清单<text class="ct-small">{{setup.summary}}</text></view>
     <view class="srow" wx:for="{{setup.items}}" wx:key="key">
       <text class="sname">{{item.label}}</text>
-      <text class="schip s-{{item.status}}">{{item.status === 'done' ? '已配置' : item.status === 'pending' ? '待填' : item.status === 'cloud' ? '云端核对' : '暂不开'}}</text>
+      <text class="schip s-{{item.status}}">{{item.status === 'done' ? '已配置' : item.status === 'pending' ? '待填' : item.status === 'cloud' ? '云端核对' : item.status === 'error' ? '运行报错' : item.status === 'blocked' ? '暂不开' : '?'}}</text>
       <view class="swhere muted">{{item.where}}</view>
       <view class="show">{{item.how}}</view>
     </view>

@@ -67,7 +67,7 @@ Page({
         cloudEnv: config.CLOUD_ENV || '未配置',
         hasTemplate: !!(config.SUBSCRIBE_TMPL_IDS && config.SUBSCRIBE_TMPL_IDS.length),
         kbVersion: kb.version,
-        setup: setup.audit(),
+        setup: setup.audit({ lastSubError: store.lastSubscribeError() }),
         pendingSync: (wx.getStorageSync('syncQueue') || []).length
       });
     }.bind(this));

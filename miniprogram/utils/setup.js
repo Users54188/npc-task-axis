@@ -73,17 +73,34 @@ function audit(over) {
     };
   });
 
+  // 订阅请求失败只在真机出现且没有任何界面提示，不接进清单就等于悄悄坏掉。
+  // 清单只渲染 label / where / how，报错原文必须放进 how 才看得见。
+  if (c.lastSubError) {
+    items.push({
+      key: 'subErr',
+      label: '最近一次订阅消息请求失败',
+      where: 'miniprogram/utils/config.js → SUBSCRIBE_TMPL_IDS',
+      why: '提醒是核心功能，静默失败等于没上线',
+      how: String(c.lastSubError) + ' —— 模板 ID 抄错、所选类目不支持该模板、或单次传了过多模板都会失败；回后台「我的模板」逐个核对 ID 与类目',
+      required: false,
+      status: 'error'
+    });
+  }
+
   const pending = items.filter(function (i) { return i.required && i.status === 'pending'; }).length;
   const cloud = items.filter(function (i) { return i.status === 'cloud'; }).length;
+  const errored = items.filter(function (i) { return i.status === 'error'; }).length;
   return {
     items: items,
     pending: pending,
     cloud: cloud,
+    errored: errored,
     blocked: items.filter(function (i) { return i.status === 'blocked'; }).length,
-    ready: pending === 0,
-    summary: pending === 0
+    ready: pending === 0 && errored === 0,
+    summary: (pending === 0
       ? '本地配置齐备，还有 ' + cloud + ' 项需在云控制台核对'
-      : '还差 ' + pending + ' 项本地配置' + (cloud ? '，另有 ' + cloud + ' 项需在云控制台核对' : '')
+      : '还差 ' + pending + ' 项本地配置' + (cloud ? '，另有 ' + cloud + ' 项需在云控制台核对' : ''))
+      + (errored ? '；⚠ ' + errored + ' 项运行时报错' : '')
   };
 }
 

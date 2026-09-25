@@ -379,6 +379,20 @@ function subscribeLog(templateId, ok) {
   wx.setStorageSync(key, v);
 }
 
+/**
+ * requestSubscribeMessage 失败时小程序只回调 fail，不弹任何提示；模板 ID 填错、
+ * 类目不支持、单次传太多模板都会走这条路，静默吞掉就等于核心提醒功能悄悄失效。
+ * 这里把最后一次失败原因留下，交给「我的」页配置清单显示。
+ */
+function subscribeError(msg) {
+  wx.setStorageSync('subErr', { msg: String(msg || 'unknown'), at: Date.now() });
+}
+
+function lastSubscribeError() {
+  const v = wx.getStorageSync('subErr');
+  return v && v.msg ? v.msg : '';
+}
+
 if (wx.onNetworkStatusChange) {
   wx.onNetworkStatusChange(function (res) {
     if (!res.isConnected) return;
@@ -392,6 +406,8 @@ module.exports = {
   listTasks, getTask, saveTask, removeTask,
   listCheckIns, addCheckIn, dropCheckIn, checkInsOf,
   subscribeLog,
+  subscribeError,
+  lastSubscribeError,
   queueSize: function () { return local(QUEUE).length; },
   rawTasks: function () { return local(TASKS); },
   rawCheckIns: function () { return local(CHECKINS); }
