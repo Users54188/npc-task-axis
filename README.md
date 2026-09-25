@@ -10,8 +10,8 @@
 ## 当前完成度
 
 ```bash
-npm test          # 178 个测试用例全绿
-# axis 15 · cloud 14 · journey 10 · kb 11 · pages 22 · recognize 10 · remind 12 · setup 9 · share 9 · store 12 · structure 13 · sync 23 · wxml 18
+npm test          # 179 个测试用例全绿
+# axis 15 · cloud 14 · journey 10 · kb 11 · pages 22 · recognize 10 · remind 12 · setup 9 · share 9 · store 12 · structure 14 · sync 23 · wxml 18
 npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/preview/pages-preview.html
 npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填的〔占位〕
 ```
@@ -107,7 +107,7 @@ npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填
 ## 提报与上线
 
 - `docs/submission/上线手册.md` —— 注册备案 → 类目 → 云开发 → 订阅模板 → 部署 → 真机自测 → 提审 → 提报，逐步操作清单
-- `docs/submission/说明文档.md` —— 赛事规程要求的六部分，含 10 个待填占位
+- `docs/submission/说明文档.md` —— 共 10 章，其中二~七章对应规程要求的六项（功能简介/应用场景/解决的实际问题/技术开发方案/创新点/第三方成果声明），八章主动申报 AI 边界，含 8 项待填占位
 
 ## 目录
 

@@ -257,6 +257,29 @@ ok('云函数用到的每个 openapi 都在 config.json 里声明了权限', fun
   assert.deepStrictEqual(missing, [], 'openapi 权限缺失会在真机部署后才暴露：' + missing.join('；'));
 });
 
+ok('说明文档的「提交前必须补齐」清单与正文占位一一对应', function () {
+  const lines = fs.readFileSync(path.join(__dirname, '..', 'docs', 'submission', '说明文档.md'), 'utf8')
+    .split(/\r?\n/);
+  const head = lines.filter(function (l) { return /提交前必须补齐/.test(l); })[0];
+  assert.ok(head, '必须有一行「提交前必须补齐」清单');
+  const named = {};
+  [...head.matchAll(/〔([^〕]+)〕/g)].forEach(function (m) { named[m[1]] = 1; });
+  const claimed = head.match(/(\d+) 项占位/);
+  assert.ok(claimed, '清单必须写明项数');
+
+  const body = lines.filter(function (l) { return !/提交前必须补齐/.test(l); }).join('\n');
+  const actual = {};
+  [...body.matchAll(/〔([^〕]+)〕/g)].forEach(function (m) { actual[m[1]] = 1; });
+  const keys = Object.keys(actual);
+
+  assert.strictEqual(+claimed[1], keys.length,
+    '清单声明 ' + claimed[1] + ' 项，正文实际 ' + keys.length + ' 项');
+  assert.deepStrictEqual(keys.filter(function (k) { return !named[k]; }), [],
+    '这些占位没被清单列出，填清单的人会漏掉：');
+  assert.deepStrictEqual(Object.keys(named).filter(function (k) { return !actual[k]; }), [],
+    '清单列了正文里不存在的占位：');
+});
+
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
 if (failures.length) {
   console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));

@@ -134,7 +134,11 @@ if (!CHROME) { console.error('FAIL  未找到 Chrome / Edge'); process.exit(1); 
 const md = fs.readFileSync(SRC, 'utf8');
 let htmlBody = render(md);
 
-const placeholders = md.match(/〔[^〕]*〕/g) || [];
+// 「提交前必须补齐」那行只是清单，本身不算待填项；按字段名去重才是真正要填几项。
+const found = md.split(/\r?\n/).filter(function (l) {
+  return !/提交前必须补齐/.test(l);
+}).join('\n').match(/〔[^〕]*〕/g) || [];
+const placeholders = Array.from(new Set(found));
 htmlBody = htmlBody.replace(/〔([^〕]*)〕/g, '<span class="ph">〔$1〕</span>');
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -143,10 +147,10 @@ fs.writeFileSync(HTML, '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="U
   htmlBody +
   '<div class="foot">本 PDF 由 tools/build-pdf.js 从 docs/submission/说明文档.md 自动生成，' +
   '修改请改源文件后重新生成。生成时间 ' + new Date().toISOString().slice(0, 10) + '。' +
-  '红色标记为待填占位，共 ' + placeholders.length + ' 处。</div></body></html>');
+  '红色标记为待填占位，共 ' + placeholders.length + ' 项待填。</div></body></html>');
 
 console.log('HTML  ' + HTML);
-console.log('占位待填 ' + placeholders.length + ' 处：');
+console.log('占位待填 ' + placeholders.length + ' 项（正文出现 ' + found.length + ' 处）：');
 placeholders.forEach(function (p) { console.log('  - ' + p); });
 
 const r = spawnSync(CHROME, [
