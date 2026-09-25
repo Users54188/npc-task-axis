@@ -118,6 +118,11 @@ function createHarness(opts) {
     showToast: function () {}, showModal: function () {}, navigateTo: function () {},
     navigateBack: function () {}, switchTab: function () {}, setClipboardData: function () {},
     stopPullDownRefresh: function () {}, requestSubscribeMessage: function () {},
+    // 默认不提供 showShareImageMenu：真实基础库可能没有，代码必须能降级。
+    showActionSheet: function (o) { wx._sheet = o; },
+    saveImageToPhotosAlbum: function (o) { wx._album = o; },
+    showLoading: function (o) { wx._loading = true; void o; },
+    hideLoading: function () { wx._loading = false; },
     setNavigationBarTitle: function () {}, setKeepScreenOn: function () {}
   };
 

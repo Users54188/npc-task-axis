@@ -145,10 +145,35 @@ Page({
   _afterPaint() {
     wx.hideLoading();
     const self = this;
+    const canShare = !!wx.showShareImageMenu;
     wx.showActionSheet({
-      itemList: ['保存到相册', '分享给好友'],
-      success(r) { if (r.tapIndex === 0) self._saveToAlbum(); },
+      itemList: canShare ? ['保存到相册', '分享给好友'] : ['保存到相册'],
+      success(r) {
+        if (r.tapIndex === 0) self._saveToAlbum();
+        else if (canShare) self._shareImage();
+      },
       fail() { /* 用户取消 */ }
+    });
+  },
+
+  /**
+   * showShareImageMenu 的参数名与最低基础库版本我没能核实（官方 API 页是 JS
+   * 单页，抓不到正文），所以整条链路带兜底：一旦失败就退回「先存相册、再从相册
+   * 发给好友」，而不是像之前那样让「分享给好友」点了没反应。
+   */
+  _shareImage() {
+    wx.showShareImageMenu({
+      path: this._tempPath,
+      fail(e) {
+        const msg = String((e && e.errMsg) || '');
+        if (/cancel/i.test(msg)) return;
+        wx.showModal({
+          title: '没法直接分享',
+          content: '当前基础库不支持直接分享图片。请改选「保存到相册」，再从相册里发给好友。'
+            + (msg ? '\n' + msg : ''),
+          showCancel: false
+        });
+      }
     });
   },
 

@@ -456,4 +456,25 @@ ok('识别：云端 501 映射成可读提示，成功后只补空字段', funct
   });
 });
 
+ok('长图菜单不留死按钮，且不支持直接分享时会降级', function () {
+  const L = createPageLoader({ offline: true });
+  const page = L.load(P('timeline/timeline.js'));
+  page._tempPath = 'wxfile://axis.png';
+
+  page._afterPaint();
+  assert.deepStrictEqual(global.wx._sheet.itemList, ['保存到相册'],
+    '基础库没有 showShareImageMenu 时，不该给出点了没反应的「分享给好友」');
+  global.wx._sheet.success({ tapIndex: 0 });
+  assert.ok(global.wx._album, '「保存到相册」必须真的调用存相册');
+  assert.strictEqual(global.wx._album.filePath, 'wxfile://axis.png');
+
+  let shared = null;
+  global.wx.showShareImageMenu = function (o) { shared = o; };
+  page._afterPaint();
+  assert.strictEqual(global.wx._sheet.itemList.length, 2, '支持时应给出两个选项');
+  global.wx._sheet.success({ tapIndex: 1 });
+  assert.ok(shared && shared.path === 'wxfile://axis.png', '「分享给好友」必须真的唤起分享');
+  void L;
+});
+
 module.exports = finish().then(function () { return { passed: passed, failed: failed }; });
