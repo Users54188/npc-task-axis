@@ -9,7 +9,19 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..', 'miniprogram');
 let passed = 0;
-function ok(label, fn) { fn(); passed++; console.log('  ✓ ' + label); }
+const failures = [];
+// 收集失败而非首个即抛：本文件全是守文档/守结构的守卫，一处漂移会挡住后面
+// 所有守卫，一次跑完才看得出到底漂了几处。
+function ok(label, fn) {
+  try {
+    fn();
+    passed++;
+    console.log('  ✓ ' + label);
+  } catch (err) {
+    failures.push(label);
+    console.log('  ✗ ' + label + '\n      ' + String(err.message).split('\n').join('\n      '));
+  }
+}
 
 function walk(dir, ext) {
   return fs.readdirSync(dir, { withFileTypes: true }).reduce(function (acc, e) {
@@ -217,4 +229,36 @@ ok('README 的测试分解表与声明的总数自洽', function () {
     '分解表之和必须等于声明的总数 —— 新增用例后两处要一起改');
 });
 
-console.log('\n' + passed + ' / ' + passed + ' 通过');
+ok('云函数用到的每个 openapi 都在 config.json 里声明了权限', function () {
+  // 官方《云调用》：每个云函数需声明其会使用到的接口，否则无法调用（-604101）。
+  const dir = path.join(__dirname, '..', 'cloudfunctions');
+  const missing = [];
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(function (e) {
+    if (!e.isDirectory()) return;
+    const fnDir = path.join(dir, e.name);
+    const used = new Set();
+    walk(fnDir, '.js').forEach(function (f) {
+      const src = fs.readFileSync(f, 'utf8');
+      [...src.matchAll(/cloud\.openapi\.([a-zA-Z]+\.[a-zA-Z]+)/g)].forEach(function (m) {
+        used.add(m[1]);
+      });
+    });
+    if (!used.size) return;
+    const cfgPath = path.join(fnDir, 'config.json');
+    if (!fs.existsSync(cfgPath)) {
+      missing.push(e.name + ' 调用了 ' + [...used].join('/') + ' 但没有 config.json');
+      return;
+    }
+    const declared = (JSON.parse(fs.readFileSync(cfgPath, 'utf8')).permissions || {}).openapi || [];
+    [...used].forEach(function (api) {
+      if (declared.indexOf(api) < 0) missing.push(e.name + ' 未声明 ' + api);
+    });
+  });
+  assert.deepStrictEqual(missing, [], 'openapi 权限缺失会在真机部署后才暴露：' + missing.join('；'));
+});
+
+console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
+if (failures.length) {
+  console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));
+  process.exit(1);
+}
