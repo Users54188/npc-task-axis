@@ -123,6 +123,48 @@ function createHarness(opts) {
     saveImageToPhotosAlbum: function (o) { wx._album = o; },
     showLoading: function (o) { wx._loading = true; void o; },
     hideLoading: function () { wx._loading = false; },
+    openSetting: function (o) { wx._setting = o || true; },
+    vibrateLong: function (o) { wx._vibrated = (wx._vibrated || 0) + 1; void o; },
+    getWindowInfo: function () { return { pixelRatio: 2, windowWidth: 375, screenWidth: 375 }; },
+    getSystemInfoSync: function () { return { pixelRatio: 2, windowWidth: 375, screenWidth: 375 }; },
+    // 够跑通 canvas 2d 的长图导出链路即可，绘制内容由 share.spec 单独断言。
+    createSelectorQuery: function () {
+      const node = {
+        width: 0, height: 0,
+        getContext: function () {
+          // 只列 canvas 2d 真实会被调到的成员；渐变必须返回带 addColorStop 的对象，
+          // 用 Proxy 兜底会在 createLinearGradient(...).addColorStop(...) 上炸。
+          return {
+            setTransform: function () {}, save: function () {}, restore: function () {},
+            translate: function () {}, scale: function () {}, rotate: function () {},
+            beginPath: function () {}, closePath: function () {}, moveTo: function () {},
+            lineTo: function () {}, arc: function () {}, rect: function () {},
+            roundRect: function () {}, fill: function () {}, stroke: function () {},
+            clip: function () {}, fillRect: function () {}, strokeRect: function () {},
+            clearRect: function () {}, fillText: function () {}, strokeText: function () {},
+            drawImage: function () {},
+            measureText: function () { return { width: 40 }; },
+            createLinearGradient: function () { return { addColorStop: function () {} }; },
+            createRadialGradient: function () { return { addColorStop: function () {} }; },
+            fillStyle: '', strokeStyle: '', font: '', textAlign: '', textBaseline: '',
+            lineWidth: 1, lineCap: '', lineJoin: '', globalAlpha: 1,
+            shadowColor: '', shadowBlur: 0, shadowOffsetY: 0
+          };
+        }
+      };
+      const q = {
+        in() { return q; },
+        select() { return q; },
+        fields() { return q; },
+        exec(cb) { cb([{ node: node, width: 300, height: 400 }]); }
+      };
+      wx._canvasNode = node;
+      return q;
+    },
+    canvasToTempFilePath: function (o) {
+      wx._export = { width: o.width, height: o.height, destWidth: o.destWidth };
+      if (o.success) o.success({ tempFilePath: 'wxfile://axis.png' });
+    },
     setNavigationBarTitle: function () {}, setKeepScreenOn: function () {}
   };
 

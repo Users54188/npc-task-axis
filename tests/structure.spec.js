@@ -294,6 +294,26 @@ ok('配置清单每个 status 都有 chip 样式与文案（动态 class 逃得�
   assert.deepStrictEqual(noText, [], '这些 status 在模板里没有对应文案，会掉进兜底显示：' + noText.join('、'));
 });
 
+ok('代码用到的每个 wx API 都有桩，或已说明为何故意不桩', function () {
+  // 桩缺失不会让测试变红，只会让那条分支从来没跑过 —— 长图分享就是这么变成死按钮的。
+  const { createHarness } = require('./helpers/wx-harness');
+  const h = createHarness({ offline: true });
+  const ALLOWED_UNSTUBBED = {
+    showShareImageMenu: '按基础库能力探测，缺了就走「只存相册」降级'
+  };
+  const used = {};
+  walk(path.join(__dirname, '..', 'miniprogram'), '.js').forEach(function (f) {
+    const src = fs.readFileSync(f, 'utf8');
+    [...src.matchAll(/wx\.([a-zA-Z]+)/g)].forEach(function (m) { used[m[1]] = 1; });
+  });
+  const names = Object.keys(used).sort();
+  const missing = names.filter(function (k) { return !(k in h.wx) && !ALLOWED_UNSTUBBED[k]; });
+  assert.deepStrictEqual(missing, [],
+    '这些 wx API 没有桩，相关代码路径在测试里从未执行：' + missing.join('、'));
+  const stale = Object.keys(ALLOWED_UNSTUBBED).filter(function (k) { return !used[k]; });
+  assert.deepStrictEqual(stale, [], '豁免清单里的 API 代码已不再使用，删掉它：' + stale.join('、'));
+});
+
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
 if (failures.length) {
   console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));

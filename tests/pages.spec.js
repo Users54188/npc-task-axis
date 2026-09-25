@@ -456,6 +456,24 @@ ok('识别：云端 501 映射成可读提示，成功后只补空字段', funct
   });
 });
 
+ok('长图：从点按钮一路走到导出，画布有尺寸且 loading 收得掉', function () {
+  const L = createPageLoader({ offline: true });
+  const page = L.load(P('timeline/timeline.js'));
+  page.onSeed();
+  return delay(40).then(function () {
+    page.onMakeImage();
+    const node = global.wx._canvasNode;
+    assert.ok(node && node.width > 0 && node.height > 0,
+      '必须先按 dpr 设好画布物理尺寸，否则导出是空白或发虚');
+    assert.ok(global.wx._export, '应真的走到 canvasToTempFilePath');
+    assert.strictEqual(global.wx._export.destWidth, node.width, '导出宽度应等于画布宽度');
+    assert.strictEqual(global.wx._loading, false, '每条出口都要 hideLoading，否则界面卡死');
+    assert.ok(page._tempPath, '临时路径要存下来给后续保存/分享用');
+    assert.ok(global.wx._sheet, '导出后应弹出保存/分享菜单');
+    void L;
+  });
+});
+
 ok('长图菜单不留死按钮，且不支持直接分享时会降级', function () {
   const L = createPageLoader({ offline: true });
   const page = L.load(P('timeline/timeline.js'));

@@ -30,9 +30,8 @@ function createPageLoader(opts) {
 
   h.wx.setNavigationBarTitle = function () {};
   h.wx.vibrateLong = function () { h.vibrated = true; };
-  h.wx.createSelectorQuery = function () {
-    return { select: function () { return { boundingBox: function () { return { exec: function () {} }; }, fields: function () { return { exec: function () {} }; } }; }, exec: function () {} };
-  };
+  // 这里不再覆盖 createSelectorQuery：原先那份只支持 boundingBox 链（代码里根本
+  // 没用过），反而把基础桩支持的 canvas 2d 链路挡掉了，长图导出因此永远测不到。
 
   const modals = [];
   const toasts = [];
