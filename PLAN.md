@@ -7,14 +7,15 @@
 > **参赛决定（2026-09-24）**：本作品为提报项目，`ai-debate-arena` 不作为本次参赛提交
 > （官方规定每人实名只能交一份作品）。
 
-## 0. 交接状态（2026-09-24 04:22 UTC）
+## 0. 交接状态（2026-09-25 14:47 UTC）
 
 **已完成并推送**：https://github.com/Users54188/npc-task-axis （public / MIT / main）
-5 commits、76 文件、`npm test` 175 条断言全绿，工作区与远端一致。
+`npm test` 177 个测试用例全绿，工作区与远端一致。
 
 代码侧覆盖：知识库解析、时间轴与临期、倒计时、养成规则、服务端校验、提醒计划、
 双向同步合并、数据层端到端、页面生命周期、真实 WXML 模板渲染、配置自检、跨设备旅程。
 `npm run preview` 可用真实模板+真实数据生成 HTML 预览供视觉核对。
+`npm run pdf` 用无头 Chrome 把说明文档渲染成 A4 PDF（提报必需），同时列出未填占位项。
 
 **未完成，且必须你本人操作**：
 
@@ -61,7 +62,7 @@
 
 `checkIns`（打卡记录）：`nodeId` `date(YYYY-MM-DD)` `subject` `stage` `note` `focusMinutes` `tags[]` `makeup` `_openid` `updatedAt`
 
-同步策略（已实现于 `utils/sync.js` + `utils/store.js`，23 条断言覆盖）：
+同步策略（已实现于 `utils/sync.js` + `utils/store.js`，23 个测试用例覆盖）：
 本地写 → 云开发落库 → `watch` 实时回推。四条规则：
 1. 有未 flush 操作的行**远端不得覆盖**（离线编辑保护）；
 2. 其余按 `updatedAt` 后者胜，合并时保留本地独有字段；

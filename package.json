@@ -5,6 +5,7 @@
   "description": "大学 NPC 任务轴 · 2026 微信小程序开发大赛参赛作品",
   "scripts": {
     "preview": "node tools/preview.js",
-    "test": "node tests/kb.spec.js && node tests/cloud.spec.js && node tests/share.spec.js && node tests/axis.spec.js && node tests/recognize.spec.js && node tests/remind.spec.js && node tests/sync.spec.js && node tests/store.spec.js && node tests/pages.spec.js && node tests/wxml.spec.js && node tests/setup.spec.js && node tests/journey.spec.js && node tests/structure.spec.js"
+    "pdf": "node tools/build-pdf.js",
+    "test": "node tools/run-tests.js"
   }
 }

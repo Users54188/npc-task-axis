@@ -10,9 +10,10 @@
 ## 当前完成度
 
 ```bash
-npm test          # 174 条断言全绿
-# 知识库 11 · 服务端校验 14 · 长图 9 · 时间轴与养成 15 · 抽取校验 10 · 提醒计划 12 · 同步合并 23 · 数据层端到端 12 · 页面逻辑 22 · WXML 模板 18 · 配置自检 9 · 端到端旅程 10 · 工程结构 9
+npm test          # 177 个测试用例全绿
+# axis 15 · cloud 14 · journey 10 · kb 11 · pages 22 · recognize 10 · remind 12 · setup 9 · share 9 · store 12 · structure 12 · sync 23 · wxml 18
 npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/preview/pages-preview.html
+npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填的〔占位〕
 ```
 
 页面用 `tests/helpers/page-harness.js` 直接驱动真实 `Page` 对象的生命周期与事件处理
@@ -58,7 +59,7 @@ npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/pr
 两份文档指向相反。在拿到官方答复前，`recognize` 云函数默认返回 `501`（需显式配置
 环境变量 `AI_MODEL` 才启用），**产品主链路完全走知识库检索，不依赖这条路径**。
 
-`recognize` 已实现并测试的是抽取结果的规整与校验（`parse.js`，10 条断言）：
+`recognize` 已实现并测试的是抽取结果的规整与校验（`parse.js`，10 个测试用例）：
 剥 ```json 围栏、日期归一、缺日期不编造、四类节点单调校验、文本截断、阶段数上限。
 图片 → 文字的 OCR 源尚未选型（微信 OCR 插件 vs 腾讯云通用 OCR），确定后补 `recognizeImage`。
 
@@ -90,7 +91,7 @@ npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/pr
 | 成绩公布 | 0 天 | 已报名 |
 
 档位设计是为了不每天重复轰炸；一次性订阅每授权一次只能发一条，
-所以 `43101`（无额度）按预期计数而不是报错。日期计算在 `plan.js`（纯函数，12 条断言）。
+所以 `43101`（无额度）按预期计数而不是报错。日期计算在 `plan.js`（纯函数，12 个测试用例）。
 
 ## 合规边界（个人主体）
 

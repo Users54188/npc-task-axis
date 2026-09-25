@@ -162,4 +162,59 @@ ok('每个列表页都订阅远端变更且都有退订路径', function () {
   assert.deepStrictEqual(missing, [], missing.join('；'));
 });
 
+function repoSrcFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).reduce(function (acc, e) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) return acc.concat(repoSrcFiles(p));
+    return /\.(js|json|wxml|wxss)$/.test(p) && !/package(-lock)?\.json$/.test(p) ? acc.concat([p]) : acc;
+  }, []);
+}
+
+ok('说明文档自述的规模数字与仓库实际一致', function () {
+  const REPO = path.join(__dirname, '..');
+  const doc = fs.readFileSync(path.join(REPO, 'docs', 'submission', '说明文档.md'), 'utf8');
+  const game = require(path.join(ROOT, 'utils', 'game.js'));
+  const kb = require(path.join(ROOT, 'data', 'knowledge-base.json'));
+  const cloudFns = fs.readdirSync(path.join(REPO, 'cloudfunctions'), { withFileTypes: true })
+    .filter(function (e) { return e.isDirectory(); }).length;
+  const srcCount = repoSrcFiles(path.join(REPO, 'miniprogram'))
+    .concat(repoSrcFiles(path.join(REPO, 'cloudfunctions'))).length;
+  const testFiles = fs.readdirSync(path.join(REPO, 'tests'))
+    .filter(function (f) { return f.endsWith('.spec.js'); }).length;
+
+  const scale = doc.match(/(\d+) 个页面、(\d+) 个云函数、(\d+) 个产品源文件（另有 (\d+) 个测试文件）/);
+  assert.ok(scale, '说明文档的「代码规模」行必须能被解析，否则改数字时守不住');
+  assert.strictEqual(+scale[1], appJson.pages.length, '页面数与 app.json 不符');
+  assert.strictEqual(+scale[2], cloudFns, '云函数数与 cloudfunctions/ 目录不符');
+  assert.strictEqual(+scale[3], srcCount, '产品源文件数与实际不符');
+  assert.strictEqual(+scale[4], testFiles, '测试文件数与实际不符');
+
+  const shell = doc.match(/(\d+) 级等级、(\d+) 章剧情、连续打卡天数、(\d+) 枚徽章/);
+  assert.ok(shell, '说明文档的「养成外壳」行必须能被解析');
+  assert.strictEqual(+shell[1], game.LEVELS.length, '等级数与 game.js 不符');
+  assert.strictEqual(+shell[2], game.CHAPTERS.length, '章节数与 game.js 不符');
+  assert.strictEqual(+shell[3], game.BADGES.length, '徽章数与 game.js 不符');
+
+  const kbCount = doc.match(/内置的 (\d+) 个证书\/赛事知识库/);
+  assert.ok(kbCount, '说明文档的知识库条数必须能被解析');
+  assert.strictEqual(+kbCount[1], kb.entries.length, '知识库条数与 knowledge-base.json 不符');
+});
+
+ok('README 的测试分解表与声明的总数自洽', function () {
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8');
+  const decl = readme.match(/npm test\s+#\s*(\d+) 个测试用例全绿\r?\n# (.+)/);
+  assert.ok(decl, 'README 必须先声明总数、下一行给出逐文件分解表');
+  const parts = decl[2]
+    .split('·')
+    .map(function (s) { return s.trim().match(/(\d+)$/); })
+    .filter(Boolean)
+    .map(function (m) { return +m[1]; });
+  const specCount = fs.readdirSync(path.join(__dirname, '..') + '/tests')
+    .filter(function (f) { return f.endsWith('.spec.js'); }).length;
+  assert.strictEqual(parts.length, specCount,
+    '分解表必须逐文件列出，条目数应等于 spec 文件数（当前 ' + specCount + '）');
+  assert.strictEqual(parts.reduce(function (a, b) { return a + b; }, 0), +decl[1],
+    '分解表之和必须等于声明的总数 —— 新增用例后两处要一起改');
+});
+
 console.log('\n' + passed + ' / ' + passed + ' 通过');
