@@ -314,6 +314,26 @@ ok('代码用到的每个 wx API 都有桩，或已说明为何故意不桩', fu
   assert.deepStrictEqual(stale, [], '豁免清单里的 API 代码已不再使用，删掉它：' + stale.join('、'));
 });
 
+ok('说明文档写明的提醒时点与 remind/plan.js 的 KINDS 完全一致', function () {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'cloudfunctions', 'remind', 'plan.js'), 'utf8');
+  const kinds = [...src.matchAll(
+    /\{ kind: '(\w+)', label: '([^']+)', field: '\w+', needRegistered: \w+, offsets: \[([\d,\s]+)\] \}/g
+  )].map(function (m) {
+    return { label: m[2], offsets: m[3].split(',').map(function (s) { return +s.trim(); }) };
+  });
+  assert.strictEqual(kinds.length, 4, 'KINDS 解析结果变了，守卫要跟着改：' + kinds.length);
+
+  const doc = fs.readFileSync(path.join(__dirname, '..', 'docs', 'submission', '说明文档.md'), 'utf8');
+  const missed = kinds.filter(function (k) {
+    const phrase = (k.offsets.length === 1 && k.offsets[0] === 0)
+      ? '当天' : k.offsets.join('/') + ' 天';
+    return doc.indexOf(k.label) < 0 || doc.indexOf(phrase) < 0;
+  }).map(function (k) { return k.label + '（' + k.offsets.join('/') + '）'; });
+
+  assert.deepStrictEqual(missed, [],
+    '文档漏写或多写了提醒时点，评委按文档验收会对不上：' + missed.join('、'));
+});
+
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
 if (failures.length) {
   console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));
