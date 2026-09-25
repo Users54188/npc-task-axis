@@ -10,8 +10,8 @@
 ## 当前完成度
 
 ```bash
-npm test          # 186 个测试用例全绿
-# axis 15 · cloud 14 · journey 10 · kb 11 · pages 24 · recognize 10 · remind 12 · setup 11 · share 9 · store 13 · structure 16 · sync 23 · wxml 18
+npm test          # 191 个测试用例全绿
+# axis 15 · cloud 14 · journey 10 · kb 11 · pages 24 · recognize 10 · remind 12 · setup 11 · share 9 · smoke 5 · store 13 · structure 16 · sync 23 · wxml 18
 npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/preview/pages-preview.html
 npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填的〔占位〕
 ```
