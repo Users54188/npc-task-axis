@@ -347,6 +347,22 @@ ok('说明文档声称的「已核 N 条」等于知识库里真带官方结论�
     '未全部核完前，文档不该出现「已全部核对」这类说法');
 });
 
+ok('仓库内每个 JSON 文件都能被解析', function () {
+  // 全仓库语法检查只覆盖 .js，知识库 JSON 少一个收尾引号时是测试炸了才发现的。
+  const bad = [];
+  (function scan(dir) {
+    fs.readdirSync(dir, { withFileTypes: true }).forEach(function (e) {
+      if (e.name === 'node_modules' || e.name === '.git' || e.name === 'output') return;
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) return scan(p);
+      if (!p.endsWith('.json')) return;
+      try { JSON.parse(fs.readFileSync(p, 'utf8')); }
+      catch (err) { bad.push(p + ' → ' + err.message.slice(0, 80)); }
+    });
+  })(path.join(__dirname, '..'));
+  assert.deepStrictEqual(bad, [], '非法 JSON：' + bad.join('；'));
+});
+
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
 if (failures.length) {
   console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));
