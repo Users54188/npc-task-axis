@@ -334,6 +334,19 @@ ok('说明文档写明的提醒时点与 remind/plan.js 的 KINDS 完全一致',
     '文档漏写或多写了提醒时点，评委按文档验收会对不上：' + missed.join('、'));
 });
 
+ok('说明文档声称的「已核 N 条」等于知识库里真带官方结论的条数', function () {
+  // 约定：verify 以「已核」/「已按…公告」开头 = 已对照官方公告核过。
+  const kb = require(path.join(ROOT, 'data', 'knowledge-base.json'));
+  const checked = kb.entries.filter(function (e) { return /^(已核|已按)/.test(e.verify || ''); });
+  const doc = fs.readFileSync(path.join(__dirname, '..', 'docs', 'submission', '说明文档.md'), 'utf8');
+  const m = doc.match(/公告核过 (\d+) 条/);
+  assert.ok(m, '说明文档必须写明已对照官方公告核过几条');
+  assert.strictEqual(+m[1], checked.length,
+    '文档说核了 ' + m[1] + ' 条，实际带官方结论的是 ' + checked.length + ' 条：' + checked.map(function (e) { return e.key; }).join('、'));
+  assert.ok(checked.length < kb.entries.length || /全部/.test(doc),
+    '未全部核完前，文档不该出现「已全部核对」这类说法');
+});
+
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');
 if (failures.length) {
   console.log(failures.length + ' 个守卫被违反：\n  - ' + failures.join('\n  - '));
