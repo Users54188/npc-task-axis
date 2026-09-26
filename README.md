@@ -15,8 +15,8 @@
 ## 当前完成度
 
 ```bash
-npm test          # 202 个测试用例全绿
-# applyconfig 10 · axis 15 · cloud 14 · journey 10 · kb 11 · pages 24 · recognize 10 · remind 12 · setup 11 · share 9 · smoke 5 · store 13 · structure 17 · sync 23 · wxml 18
+npm test          # 204 个测试用例全绿
+# applyconfig 10 · axis 15 · cloud 14 · journey 10 · kb 11 · pages 24 · recognize 10 · remind 12 · setup 11 · share 9 · smoke 5 · store 13 · structure 19 · sync 23 · wxml 18
 npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/preview/pages-preview.html
 npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填的〔占位〕
 npm run fill -- --appid=wx… --env=… --tmpl=… --remind=@remind.json   # 一条命令填完三处并校验自洽
