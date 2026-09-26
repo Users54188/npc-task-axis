@@ -34,13 +34,15 @@ ok('"计算机二级" 命中 NCRE 并选到最近的 12 月考次', function () 
   console.log('    → 报名 ' + s.regStart + '~' + s.regEnd + ' / 考试 ' + s.examDate + ' / 查分 ' + s.scoreStart);
 });
 
-ok('"四级" 命中 CET-4 且考试日为 12 月第三个周六', function () {
+ok('"四级" 命中 CET-4 且考试日与官方公告一致（12 月第二个周六）', function () {
   const s = kb.suggest('四级', REF);
   assert.strictEqual(s.key, 'cet4');
   const exam = d.parse(s.examDate);
   assert.strictEqual(exam.getMonth() + 1, 12);
   assert.strictEqual(exam.getDay(), 6, '应为周六，实际 ' + exam.getDay());
-  assert.ok(exam.getDate() >= 15 && exam.getDate() <= 21, '应为第三周，实际 ' + exam.getDate());
+  // 第二个周六必落在 8~14 日。中国教育考试网 2026 公告：笔试 2026-12-12、2026-06-13。
+  assert.ok(exam.getDate() >= 8 && exam.getDate() <= 14, '应为第二个周六（8~14 日），实际 ' + exam.getDate());
+  assert.strictEqual(s.examDate, '2026-12-12', '与官方公告日期不符');
   assert.strictEqual(s.examApprox, false);
   console.log('    → 考试 ' + s.examDate + '（' + ['日', '一', '二', '三', '四', '五', '六'][exam.getDay()] + '曜日）');
 });
