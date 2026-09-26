@@ -212,21 +212,16 @@ ok('说明文档自述的规模数字与仓库实际一致', function () {
   assert.strictEqual(+kbCount[1], kb.entries.length, '知识库条数与 knowledge-base.json 不符');
 });
 
-ok('README 的测试分解表与声明的总数自洽', function () {
-  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8');
-  const decl = readme.match(/npm test\s+#\s*(\d+) 个测试用例全绿\r?\n# (.+)/);
-  assert.ok(decl, 'README 必须先声明总数、下一行给出逐文件分解表');
-  const parts = decl[2]
-    .split('·')
-    .map(function (s) { return s.trim().match(/(\d+)$/); })
-    .filter(Boolean)
-    .map(function (m) { return +m[1]; });
-  const specCount = fs.readdirSync(path.join(__dirname, '..') + '/tests')
-    .filter(function (f) { return f.endsWith('.spec.js'); }).length;
-  assert.strictEqual(parts.length, specCount,
-    '分解表必须逐文件列出，条目数应等于 spec 文件数（当前 ' + specCount + '）');
-  assert.strictEqual(parts.reduce(function (a, b) { return a + b; }, 0), +decl[1],
-    '分解表之和必须等于声明的总数 —— 新增用例后两处要一起改');
+ok('README 与 PLAN 不写死测试用例总数', function () {
+  // 原先这条只校验「分解表之和 == 声明总数」，是内部自洽检查：204 配旧的分解项
+  // 一样全绿，而真实总数早已是 205。自洽不等于真值，所以直接禁止写死。
+  const bad = [];
+  ['README.md', 'PLAN.md'].forEach(function (f) {
+    const s = fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
+    (s.match(/\d+ 个测试用例/g) || []).forEach(function (m) { bad.push(f + ' → ' + m); });
+  });
+  assert.deepStrictEqual(bad, [],
+    '写死的用例总数必然腐烂，改指 npm test 的输出：' + bad.join('、'));
 });
 
 ok('云函数用到的每个 openapi 都在 config.json 里声明了权限', function () {
@@ -361,6 +356,17 @@ ok('仓库内每个 JSON 文件都能被解析', function () {
     });
   })(path.join(__dirname, '..'));
   assert.deepStrictEqual(bad, [], '非法 JSON：' + bad.join('；'));
+});
+
+ok('说明文档的用例总数走占位符，不允许再写死数字', function () {
+  const doc = fs.readFileSync(path.join(__dirname, '..', 'docs', 'submission', '说明文档.md'), 'utf8');
+  assert.ok(doc.indexOf('{{测试用例数}}') >= 0,
+    '说明文档必须用 {{测试用例数}} 占位，由 npm run pdf 现场填入 npm test 的真实总计');
+  const hardcoded = (doc.match(/\d+ 个测试用例/g) || []).filter(function (s) {
+    return !/^10 个测试用例$|^5 个测试用例$/.test(s);
+  });
+  assert.deepStrictEqual(hardcoded, [],
+    '这些是写死的用例数，会随测试增长而腐烂（总数请用占位符）：' + hardcoded.join('、'));
 });
 
 console.log('\n' + passed + ' / ' + (passed + failures.length) + ' 通过');

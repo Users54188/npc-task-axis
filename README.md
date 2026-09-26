@@ -15,8 +15,8 @@
 ## 当前完成度
 
 ```bash
-npm test          # 204 个测试用例全绿
-# applyconfig 10 · axis 15 · cloud 14 · journey 10 · kb 11 · pages 24 · recognize 10 · remind 12 · setup 11 · share 9 · smoke 5 · store 13 · structure 19 · sync 23 · wxml 18
+npm test          # 串行跑 15 个 spec 并打印总计与逐文件分解；总数以该输出为准，别抄进文档
+# 分解示例：applyconfig 10 · axis 15 · cloud 14 · journey 10 · kb 11 · pages 24 · recognize 10 · remind 12 · setup 11 · share 9 · smoke 5 · store 13 · structure 20 · sync 23 · wxml 18
 npm run preview   # 真实 WXML + 真实页面数据 + 真实 WXSS → output/preview/pages-preview.html
 npm run pdf       # 说明文档 → A4 PDF（无头 Chrome），并列出未填的〔占位〕
 npm run fill -- --appid=wx… --env=… --tmpl=… --remind=@remind.json   # 一条命令填完三处并校验自洽
@@ -66,7 +66,7 @@ npm run review    # 生成 output/submission/知识库核对表.md：10 条考�
 两份文档指向相反。在拿到官方答复前，`recognize` 云函数默认返回 `501`（需显式配置
 环境变量 `AI_MODEL` 才启用），**产品主链路完全走知识库检索，不依赖这条路径**。
 
-`recognize` 已实现并测试的是抽取结果的规整与校验（`parse.js`，10 个测试用例）：
+`recognize` 已实现并测试的是抽取结果的规整与校验（`parse.js`，由 recognize.spec 覆盖）：
 剥 ```json 围栏、日期归一、缺日期不编造、四类节点单调校验、文本截断、阶段数上限。
 图片 → 文字的 OCR 源尚未选型（微信 OCR 插件 vs 腾讯云通用 OCR），确定后补 `recognizeImage`。
 
@@ -98,7 +98,7 @@ npm run review    # 生成 output/submission/知识库核对表.md：10 条考�
 | 成绩公布 | 0 天 | 已报名 |
 
 档位设计是为了不每天重复轰炸；一次性订阅每授权一次只能发一条，
-所以 `43101`（无额度）按预期计数而不是报错。日期计算在 `plan.js`（纯函数，12 个测试用例）。
+所以 `43101`（无额度）按预期计数而不是报错。日期计算在 `plan.js`（纯函数，由 remind.spec 覆盖）。
 
 ## 合规边界（个人主体）
 

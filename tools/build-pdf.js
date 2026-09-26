@@ -131,7 +131,23 @@ const CSS = [
 
 if (!CHROME) { console.error('FAIL  未找到 Chrome / Edge'); process.exit(1); }
 
-const md = fs.readFileSync(SRC, 'utf8');
+/**
+ * 测试用例总数由 npm test 现场算出，绝不在文档里写死：每加一个用例，手写数字就
+ * 过期一次，而 README 那条守卫只查「分解表之和 == 声明总数」这种内部自洽，
+ * 202 配旧的分解项照样全绿 —— 已经放走过两轮。跑不动就不出 PDF，不发猜的数字。
+ */
+function liveTestTotal() {
+  const r = spawnSync(process.execPath, [path.join(ROOT, 'tools', 'run-tests.js')], { encoding: 'utf8' });
+  const m = ((r.stdout || '') + (r.stderr || '')).match(/总计：(\d+) 个测试文件，(\d+) 个测试用例/);
+  if (r.status !== 0 || !m) {
+    console.error('FAIL  npm test 未通过或没打印总计（退出码 ' + r.status + '），拒绝生成带猜测数字的 PDF');
+    process.exit(1);
+  }
+  return +m[2];
+}
+
+const cases = liveTestTotal();
+const md = fs.readFileSync(SRC, 'utf8').replace(/\{\{测试用例数\}\}/g, String(cases));
 let htmlBody = render(md);
 
 // 「提交前必须补齐」那行只是清单，本身不算待填项；按字段名去重才是真正要填几项。
